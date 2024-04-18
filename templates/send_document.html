@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        #container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 12px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        #current_time {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        form, select, input[type="checkbox"], button {
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <title>Отправка документов</title>
+</head>
+<body>
+    <div id="container">
+        <div style="float:right; margin-right: 20px;">
+            <p>Имя пользователя: {{ session.username }}</p>
+            <p>Текущее время: <span id="current_time"></span></p>
+            <a href="/document_interaction">Назад</a>
+        </div>
+
+        <script>
+            function updateCurrentTime() {
+                var currentTimeElement = document.getElementById('current_time');
+                var currentTime = new Date().toLocaleString();
+                currentTimeElement.textContent = currentTime;
+            }
+
+            updateCurrentTime();
+            setInterval(function() {
+                updateCurrentTime();
+            }, 1000);
+        </script>
+
+         <h1>Отправка документов</h1>
+
+    <h2>Выберите получателя:</h2>
+    <form action="/send_document" method="post">
+        <select name="receiver">
+            {% for user in all_users %}
+            <option value="{{ user[0] }}">{{ user[0] }}</option>
+            {% endfor %}
+        </select>
+
+        <h2>Выберите документ для отправки:</h2>
+        <select name="document_id">
+            {% for document in all_documents %}
+            <option value="{{ document[0] }}">{{ document[1] }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="approval_needed">Требуется согласование</label>
+        <input type="checkbox" id="approval_needed" name="approval_needed" value="true">
+
+        <button type="submit">Отправить</button>
+    </form>
+
+    <h2>Входящие документы:</h2>
+        <table>
+        <tr>
+            <th>Номер</th>
+            <th>Отправитель</th>
+            <th>Дата</th>
+            <th>Название Документа</th>
+            <th>Автор документа</th>
+            <th>Операции с документом</th>
+        </tr>
+        {% for document in incoming_documents %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ document[2] }}</td>
+            <td>{{ document[3] }}</td>
+            <td>{{ document[1] }}</td>
+            <td>{{ document[4] }}</td>
+
+            <td>
+                <button onclick="location.href='/download/{{document[0]}}'">Загрузить</button>
+                <button onclick="location.href='/delete_message/{{document[0]}}'">Удалить</button>
+                {% if document[5] == 'pending_approval' %}
+                    <button onclick="location.href='/approve_document/{{document[0]}}'">Согласовать</button>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    </div>
+</body>
+</html>

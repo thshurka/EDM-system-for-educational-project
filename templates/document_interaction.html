@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        #container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 12px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        #current_time {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        form, select, input[type="checkbox"], button {
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+
+    <title>Document Interactions</title>
+</head>
+<body>
+    <div id="container">
+        <div style="float:right; margin-right: 20px;">
+            <p>Имя пользователя: {{ session.username }}</p>
+            <p>Текущее время: <span id="current_time"></span></p>
+            <a href="/logout">Выход</a>
+            <a href="/send_document">Почта</a>
+        </div>
+
+        <script>
+            function updateCurrentTime() {
+                var currentTimeElement = document.getElementById('current_time');
+                var currentTime = new Date().toLocaleString();
+                currentTimeElement.textContent = currentTime;
+            }
+
+            updateCurrentTime();
+            setInterval(function() {
+                updateCurrentTime();
+            }, 1000);
+
+            function searchApprovedDocuments() {
+                var input, filter, table, tr, td, i, txtValue;
+                input = document.getElementById("searchInput");
+                filter = input.value.toUpperCase();
+                table = document.getElementById("documentTable_approved"); // Измененный идентификатор таблицы с согласованными документами
+                tr = table.getElementsByTagName("tr");
+                for (i = 0; i < tr.length; i++) {
+                    td = tr[i].getElementsByTagName("td")[1]; // Измененный номер столбца, по которому выполняется поиск (зависит от вашей структуры таблицы)
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                    }
+                }
+            }
+        </script>
+
+        <h1>Взаимодействие с документами</h1>
+
+        <h2>Несогласованные документы</h2>
+        <table id="documentTable_pending">
+            <tr>
+                <th>Номер</th>
+                <th>Название</th>
+                <th>Автор</th>
+                <th>Время загрузки</th>
+                <th>Действия</th>
+            </tr>
+            {% for document in pending_documents %}
+            <tr>
+                <td>{{document[0]}}</td>
+                <td>{{document[1]}}</td>
+                <td>{{document[3]}}</td>
+                <td>{{document[4]}}</td>
+                <td><button onclick="location.href='/download/{{document[0]}}'">Скачать</button></td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <h2>Согласованные документы</h2>
+
+        <input type="text" id="searchInput" onkeyup="searchApprovedDocuments()" placeholder="Search for approved document titles..">
+
+        <table id="documentTable_approved">
+            <tr>
+                <th>Номер</th>
+                <th>Название</th>
+                <th>Автор</th>
+                <th>Время загрузки</th>
+                <th>Действия</th>
+            </tr>
+            {% for document in approved_documents %}
+            <tr>
+                <td>{{document[0]}}</td>
+                <td>{{document[1]}}</td>
+                <td>{{document[3]}}</td>
+                <td>{{document[4]}}</td>
+                <td><button onclick="location.href='/download/{{document[0]}}'">Скачать</button></td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <div style="text-align: center; margin-top: 20px;">
+    <h2>Загрузить документ</h2>
+    <form action="/add_document" method="post" enctype="multipart/form-data">
+        <label for="title">Название:</label><br>
+        <input type="text" id="title" name="title"><br>
+        <input type="file" name="file"><br>
+        <button type="submit">Загрузить</button>
+    </form>
+</div>
+</div>
+</body>
+</html>

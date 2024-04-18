@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Document</title>
+</head>
+<body>
+    <h2>Add Document</h2>
+    <form action="/add_document" method="post" enctype="multipart/form-data">
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title"><br>
+        <label for="content">Content:</label><br>
+        <textarea id="content" name="content"></textarea><br>
+        <input type="file" name="file"><br>
+        <input type="submit" value="Add Document">
+    </form>
+    <a href="/">Back to Home</a>
+</body>
+</html>

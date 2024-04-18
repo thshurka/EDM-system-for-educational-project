@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Документы на согласование</title>
+</head>
+<body>
+    <h1>Документы на согласование</h1>
+    <ul>
+        {% for doc in approval_docs %}
+            <li>
+                {{ doc.title }} от {{ doc.author }}
+                <form action="/approve_document/{{ doc.id }}" method="post">
+                    <button type="submit">Согласовать</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

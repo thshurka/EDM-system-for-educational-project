@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+</head>
+<body>
+  <h1>Admin Panel</h1>
+
+
+  <h2>Users</h2>
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Action</th>
+    </tr>
+    {% for user in users %}
+
+    <tr>
+      <td>{{ user[0] }}</td>
+      <td>{{ user[1] }}</td>
+      <td><a href="/delete_user/{{ user[0] }}">Delete</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  <h2>Documents</h2>
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Title</th>
+      <th>Action</th>
+    </tr>
+    {% for document in documents %}
+    <tr>
+      <td>{{ document[0] }}</td>
+      <td>{{ document[1] }}</td>
+      <td><a href="/delete_doc/{{ document[0] }}">Delete</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
